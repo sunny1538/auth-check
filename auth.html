@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FoodDash – Login</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #0f0f0f;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+  }
+
+  .bg-pattern {
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 20%, rgba(255,100,30,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 80% 80%, rgba(255,180,0,0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .card {
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 20px;
+    padding: 40px 36px;
+    width: 100%;
+    max-width: 420px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+
+  .brand-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #ff641e, #ffb400);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+
+  .brand-name {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  .brand-name span { color: #ff641e; }
+
+  h2 {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+  }
+
+  .subtitle {
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 28px;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    color: #aaa;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  input {
+    width: 100%;
+    background: #111;
+    border: 1px solid #2e2e2e;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 15px;
+    color: #fff;
+    outline: none;
+    transition: border-color 0.2s;
+    font-family: inherit;
+  }
+
+  input:focus {
+    border-color: #ff641e;
+  }
+
+  input::placeholder { color: #444; }
+
+  .btn {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(135deg, #ff641e, #ff8c00);
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: opacity 0.2s, transform 0.1s;
+    font-family: inherit;
+  }
+
+  .btn:hover { opacity: 0.9; }
+  .btn:active { transform: scale(0.98); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+    color: #444;
+    font-size: 13px;
+  }
+
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #2a2a2a;
+  }
+
+  .toggle {
+    text-align: center;
+    font-size: 14px;
+    color: #888;
+    margin-top: 20px;
+  }
+
+  .toggle a {
+    color: #ff641e;
+    text-decoration: none;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .toggle a:hover { text-decoration: underline; }
+
+  .msg {
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    margin-bottom: 16px;
+    display: none;
+  }
+
+  .msg.error {
+    background: rgba(220, 50, 50, 0.15);
+    border: 1px solid rgba(220, 50, 50, 0.3);
+    color: #ff6b6b;
+    display: block;
+  }
+
+  .msg.success {
+    background: rgba(30, 180, 100, 0.15);
+    border: 1px solid rgba(30, 180, 100, 0.3);
+    color: #4cde9a;
+    display: block;
+  }
+
+  /* ORDER PAGE */
+  #order-page {
+    display: none;
+    min-height: 100vh;
+    background: #0f0f0f;
+    padding: 24px 16px;
+  }
+
+  .navbar {
+    max-width: 900px;
+    margin: 0 auto 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 14px;
+  }
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .nav-brand-icon {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #ff641e, #ffb400);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    color: #aaa;
+  }
+
+  .logout-btn {
+    background: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    color: #ccc;
+    padding: 7px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: inherit;
+    transition: background 0.2s;
+  }
+
+  .logout-btn:hover { background: #333; }
+
+  .order-container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .section-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .section-sub {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .menu-card {
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 14px;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .menu-card:hover { border-color: #ff641e44; transform: translateY(-2px); }
+
+  .menu-img {
+    height: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 56px;
+    background: #111;
+  }
+
+  .menu-body { padding: 14px 16px; }
+
+  .menu-name {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .menu-desc {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 12px;
+    line-height: 1.4;
+  }
+
+  .menu-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .price {
+    font-size: 16px;
+    font-weight: 700;
+    color: #ff641e;
+  }
+
+  .add-btn {
+    background: #ff641e;
+    border: none;
+    color: #fff;
+    padding: 7px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity 0.2s;
+  }
+
+  .add-btn:hover { opacity: 0.85; }
+
+  .cart-section {
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 14px;
+    padding: 20px;
+  }
+
+  .cart-title {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .cart-badge {
+    background: #ff641e;
+    color: #fff;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-weight: 700;
+  }
+
+  .cart-empty {
+    color: #555;
+    font-size: 14px;
+    text-align: center;
+    padding: 24px 0;
+  }
+
+  .cart-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #2a2a2a;
+    font-size: 14px;
+  }
+
+  .cart-item:last-child { border-bottom: none; }
+
+  .cart-item-name { flex: 1; }
+
+  .cart-item-qty {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #aaa;
+  }
+
+  .qty-btn {
+    width: 24px;
+    height: 24px;
+    background: #2a2a2a;
+    border: none;
+    color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    font-family: inherit;
+  }
+
+  .cart-total {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 14px;
+    margin-top: 4px;
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  .place-order-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #ff641e, #ff8c00);
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 16px;
+    font-family: inherit;
+    transition: opacity 0.2s;
+  }
+
+  .place-order-btn:hover { opacity: 0.9; }
+  .place-order-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .auth-wrapper {
+    width: 100%;
+    max-width: 420px;
+    position: relative;
+    z-index: 1;
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-pattern"></div>
+
+<!-- AUTH SECTION -->
+<div class="auth-wrapper" id="auth-section">
+  <div class="card">
+    <div class="brand">
+      <div class="brand-icon">🍔</div>
+      <div class="brand-name">Food<span>Dash</span></div>
+    </div>
+
+    <div id="msg" class="msg"></div>
+
+    <!-- LOGIN FORM -->
+    <div id="login-form">
+      <h2>Welcome back</h2>
+      <p class="subtitle">Sign in to your account to order food</p>
+
+      <div class="form-group">
+        <label>Email address</label>
+        <input type="email" id="login-email" placeholder="you@example.com" />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="Enter your password" />
+      </div>
+
+      <button class="btn" onclick="handleLogin()">Sign in</button>
+
+      <div class="toggle">
+        Don't have an account? <a onclick="switchToRegister()">Create one</a>
+      </div>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div id="register-form" style="display:none">
+      <h2>Create account</h2>
+      <p class="subtitle">Join FoodDash and start ordering</p>
+
+      <div class="form-group">
+        <label>Full name</label>
+        <input type="text" id="reg-name" placeholder="Your full name" />
+      </div>
+      <div class="form-group">
+        <label>Email address</label>
+        <input type="email" id="reg-email" placeholder="you@example.com" />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="reg-password" placeholder="Min 6 characters" />
+      </div>
+
+      <button class="btn" onclick="handleRegister()">Create account</button>
+
+      <div class="toggle">
+        Already have an account? <a onclick="switchToLogin()">Sign in</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ORDER PAGE -->
+<div id="order-page">
+  <div class="navbar">
+    <div class="nav-brand">
+      <div class="nav-brand-icon">🍔</div>
+      Food<span style="color:#ff641e">Dash</span>
+    </div>
+    <div class="user-info">
+      <span id="user-greeting">Hello!</span>
+      <button class="logout-btn" onclick="handleLogout()">Sign out</button>
+    </div>
+  </div>
+
+  <div class="order-container">
+    <p class="section-title">What's for today? 🍽️</p>
+    <p class="section-sub">Fresh, hot food delivered to your door</p>
+
+    <div class="menu-grid" id="menu-grid"></div>
+
+    <div class="cart-section">
+      <div class="cart-title">
+        🛒 Your Cart
+        <span class="cart-badge" id="cart-count">0</span>
+      </div>
+      <div id="cart-items"><p class="cart-empty">Your cart is empty. Add some items!</p></div>
+      <div class="cart-total" id="cart-total" style="display:none">
+        <span>Total</span>
+        <span id="total-price">₹0</span>
+      </div>
+      <button class="place-order-btn" id="place-order-btn" disabled onclick="placeOrder()">Place Order</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+// =============================================
+// 🔧 CONFIGURE YOUR SUPABASE CREDENTIALS HERE
+// =============================================
+const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+// =============================================
+
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ---------- MENU DATA ----------
+const menuItems = [
+  { id: 1, name: 'Classic Burger', desc: 'Juicy beef patty with cheese & veggies', price: 199, emoji: '🍔' },
+  { id: 2, name: 'Margherita Pizza', desc: 'Fresh tomatoes, mozzarella, basil', price: 299, emoji: '🍕' },
+  { id: 3, name: 'Chicken Biryani', desc: 'Aromatic basmati rice with tender chicken', price: 249, emoji: '🍛' },
+  { id: 4, name: 'Paneer Wrap', desc: 'Grilled paneer with fresh mint chutney', price: 179, emoji: '🌯' },
+  { id: 5, name: 'Pasta Arrabbiata', desc: 'Spicy tomato sauce with penne', price: 229, emoji: '🍝' },
+  { id: 6, name: 'Chocolate Brownie', desc: 'Warm fudgy brownie with ice cream', price: 129, emoji: '🍫' },
+];
+
+let cart = {};
+
+// ---------- AUTH HELPERS ----------
+function showMsg(text, type) {
+  const el = document.getElementById('msg');
+  el.textContent = text;
+  el.className = 'msg ' + type;
+}
+
+function clearMsg() {
+  const el = document.getElementById('msg');
+  el.className = 'msg';
+  el.textContent = '';
+}
+
+function switchToRegister() {
+  document.getElementById('login-form').style.display = 'none';
+  document.getElementById('register-form').style.display = 'block';
+  clearMsg();
+}
+
+function switchToLogin() {
+  document.getElementById('register-form').style.display = 'none';
+  document.getElementById('login-form').style.display = 'block';
+  clearMsg();
+}
+
+async function handleLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+
+  if (!email || !password) return showMsg('Please fill in all fields.', 'error');
+
+  const btn = document.querySelector('#login-form .btn');
+  btn.disabled = true;
+  btn.textContent = 'Signing in…';
+
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+
+  btn.disabled = false;
+  btn.textContent = 'Sign in';
+
+  if (error) return showMsg(error.message, 'error');
+  showOrderPage(data.user);
+}
+
+async function handleRegister() {
+  const name = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const password = document.getElementById('reg-password').value;
+
+  if (!name || !email || !password) return showMsg('Please fill in all fields.', 'error');
+  if (password.length < 6) return showMsg('Password must be at least 6 characters.', 'error');
+
+  const btn = document.querySelector('#register-form .btn');
+  btn.disabled = true;
+  btn.textContent = 'Creating account…';
+
+  const { data, error } = await sb.auth.signUp({
+    email,
+    password,
+    options: { data: { full_name: name } }
+  });
+
+  btn.disabled = false;
+  btn.textContent = 'Create account';
+
+  if (error) return showMsg(error.message, 'error');
+
+  if (data.session) {
+    showOrderPage(data.user);
+  } else {
+    showMsg('Account created! Please check your email to confirm.', 'success');
+  }
+}
+
+async function handleLogout() {
+  await sb.auth.signOut();
+  cart = {};
+  document.getElementById('order-page').style.display = 'none';
+  document.getElementById('auth-section').style.display = 'flex';
+  document.querySelector('body').style.display = 'flex';
+  document.querySelector('body').style.alignItems = 'center';
+  document.querySelector('body').style.justifyContent = 'center';
+  switchToLogin();
+}
+
+// ---------- ORDER PAGE ----------
+function showOrderPage(user) {
+  document.getElementById('auth-section').style.display = 'none';
+  document.body.style.alignItems = 'flex-start';
+  document.body.style.justifyContent = 'flex-start';
+
+  const name = user.user_metadata?.full_name || user.email.split('@')[0];
+  document.getElementById('user-greeting').textContent = 'Hi, ' + name + ' 👋';
+  document.getElementById('order-page').style.display = 'block';
+
+  renderMenu();
+}
+
+function renderMenu() {
+  const grid = document.getElementById('menu-grid');
+  grid.innerHTML = menuItems.map(item => `
+    <div class="menu-card">
+      <div class="menu-img">${item.emoji}</div>
+      <div class="menu-body">
+        <p class="menu-name">${item.name}</p>
+        <p class="menu-desc">${item.desc}</p>
+        <div class="menu-footer">
+          <span class="price">₹${item.price}</span>
+          <button class="add-btn" onclick="addToCart(${item.id})">+ Add</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addToCart(id) {
+  cart[id] = (cart[id] || 0) + 1;
+  renderCart();
+}
+
+function updateQty(id, delta) {
+  cart[id] = (cart[id] || 0) + delta;
+  if (cart[id] <= 0) delete cart[id];
+  renderCart();
+}
+
+function renderCart() {
+  const ids = Object.keys(cart);
+  const countEl = document.getElementById('cart-count');
+  const itemsEl = document.getElementById('cart-items');
+  const totalEl = document.getElementById('cart-total');
+  const totalPriceEl = document.getElementById('total-price');
+  const orderBtn = document.getElementById('place-order-btn');
+
+  const totalQty = ids.reduce((s, id) => s + cart[id], 0);
+  countEl.textContent = totalQty;
+
+  if (ids.length === 0) {
+    itemsEl.innerHTML = '<p class="cart-empty">Your cart is empty. Add some items!</p>';
+    totalEl.style.display = 'none';
+    orderBtn.disabled = true;
+    return;
+  }
+
+  let total = 0;
+  itemsEl.innerHTML = ids.map(id => {
+    const item = menuItems.find(m => m.id == id);
+    const subtotal = item.price * cart[id];
+    total += subtotal;
+    return `
+      <div class="cart-item">
+        <span class="cart-item-name">${item.emoji} ${item.name}</span>
+        <div class="cart-item-qty">
+          <button class="qty-btn" onclick="updateQty(${id}, -1)">−</button>
+          <span>${cart[id]}</span>
+          <button class="qty-btn" onclick="updateQty(${id}, 1)">+</button>
+          <span style="color:#aaa; min-width:54px; text-align:right">₹${subtotal}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  totalEl.style.display = 'flex';
+  totalPriceEl.textContent = '₹' + total;
+  orderBtn.disabled = false;
+}
+
+async function placeOrder() {
+  const btn = document.getElementById('place-order-btn');
+  btn.disabled = true;
+  btn.textContent = 'Placing order…';
+
+  const { data: { user } } = await sb.auth.getUser();
+  const items = Object.keys(cart).map(id => {
+    const item = menuItems.find(m => m.id == id);
+    return { item_id: id, name: item.name, qty: cart[id], price: item.price };
+  });
+  const total = items.reduce((s, i) => s + i.price * i.qty, 0);
+
+  const { error } = await sb.from('app_orders').insert({
+    user_id: user.id,
+    items: items,
+    total_amount: total,
+    status: 'pending'
+  });
+
+  if (error) {
+    alert('Order failed: ' + error.message);
+    btn.disabled = false;
+    btn.textContent = 'Place Order';
+    return;
+  }
+
+  cart = {};
+  renderCart();
+  btn.textContent = 'Place Order';
+  alert('🎉 Order placed successfully! We\'ll start preparing it right away.');
+}
+
+// ---------- EXPOSE TO WINDOW (needed for ESM + inline onclick) ----------
+window.handleLogin = handleLogin;
+window.handleRegister = handleRegister;
+window.handleLogout = handleLogout;
+window.switchToRegister = switchToRegister;
+window.switchToLogin = switchToLogin;
+window.addToCart = addToCart;
+window.updateQty = updateQty;
+window.placeOrder = placeOrder;
+
+// ---------- AUTO LOGIN CHECK ----------
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session?.user) {
+    showOrderPage(session.user);
+  }
+})();
+</script>
+</body>
+</html>
