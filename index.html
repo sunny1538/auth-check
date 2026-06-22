@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Waybill — Order Food</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#241A17;
+    --ink-soft:#2E211D;
+    --ink-line:#42302A;
+    --paper:#F6EFE2;
+    --paper-line:#DED0B4;
+    --saffron:#E3A23C;
+    --chili:#D1453B;
+    --olive:#6B7A4F;
+    --text-light:#F2E9DC;
+    --muted:#B19E8C;
+    --ink-text:#2E2118;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--ink);color:var(--text-light);font-family:'Work Sans',sans-serif;}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 22px 90px;}
+
+  /* header */
+  header{display:flex;justify-content:space-between;align-items:center;padding:24px 0;flex-wrap:wrap;gap:14px;}
+  .logo{display:flex;align-items:center;gap:11px;}
+  .logo-mark{width:42px;height:42px;border-radius:9px;background:var(--saffron);color:var(--ink);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-weight:600;}
+  .logo h1{margin:0;font-family:'Fraunces',serif;font-size:20px;font-weight:600;}
+  .logo p{margin:0;font-size:11px;color:var(--muted);letter-spacing:1.4px;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;}
+  .auth-area{display:flex;gap:10px;align-items:center;}
+  .btn{border:none;cursor:pointer;font-family:'Work Sans',sans-serif;font-weight:600;font-size:14px;border-radius:8px;padding:10px 18px;}
+  .btn.outline{background:transparent;border:1px solid var(--ink-line);color:var(--text-light);}
+  .btn.outline:hover{border-color:var(--saffron);color:var(--saffron);}
+  .btn.solid{background:var(--chili);color:#fff;}
+  .btn.solid:hover{filter:brightness(1.08);}
+  .greet{font-size:14px;color:var(--text-light);}
+  .greet b{color:var(--saffron);}
+
+  /* hero */
+  .hero{padding:50px 0 60px;text-align:left;}
+  .hero h2{font-family:'Fraunces',serif;font-size:clamp(34px,5vw,52px);line-height:1.08;margin:0 0 16px;font-weight:600;max-width:620px;}
+  .hero h2 span{color:var(--saffron);}
+  .hero p{color:var(--muted);font-size:15.5px;max-width:480px;margin:0 0 26px;}
+
+  /* menu - ticket rail */
+  .section-label{font-family:'IBM Plex Mono',monospace;font-size:11.5px;letter-spacing:1.6px;text-transform:uppercase;color:var(--saffron);margin-bottom:8px;}
+  .section-title{font-family:'Fraunces',serif;font-size:25px;margin:0 0 22px;font-weight:600;}
+
+  .menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  @media(max-width:760px){.menu-grid{grid-template-columns:1fr 1fr;}}
+  @media(max-width:520px){.menu-grid{grid-template-columns:1fr;}}
+
+  .chit{
+    position:relative;background:var(--paper);color:var(--ink-text);border-radius:6px;
+    padding:18px 18px 16px;font-family:'Work Sans',sans-serif;
+  }
+  .chit::before,.chit::after{
+    content:'';position:absolute;width:18px;height:18px;background:var(--ink);border-radius:50%;
+    top:50%;transform:translateY(-50%);
+  }
+  .chit::before{left:-9px;} .chit::after{right:-9px;}
+  .chit .dish{font-family:'Fraunces',serif;font-weight:600;font-size:16.5px;margin-bottom:4px;}
+  .chit .desc{font-size:12.5px;color:#6b5d4d;margin-bottom:12px;min-height:32px;}
+  .chit .bottom{display:flex;justify-content:space-between;align-items:center;border-top:1.5px dashed var(--paper-line);padding-top:10px;}
+  .chit .price{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:14px;}
+  .chit button{
+    background:var(--ink);color:var(--saffron);border:none;border-radius:6px;padding:6px 12px;
+    font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Work Sans',sans-serif;
+  }
+  .chit button:hover{background:var(--chili);color:#fff;}
+
+  /* cart bar */
+  .cartbar{
+    position:fixed;left:0;right:0;bottom:0;background:var(--ink-soft);border-top:1px solid var(--ink-line);
+    padding:14px 22px;display:flex;justify-content:center;z-index:50;
+  }
+  .cartbar-inner{max-width:1100px;width:100%;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;}
+  .cart-summary{font-size:14px;color:var(--text-light);font-family:'IBM Plex Mono',monospace;}
+  .cart-summary b{color:var(--saffron);}
+
+  /* modal */
+  .overlay{position:fixed;inset:0;background:rgba(20,14,12,0.72);display:none;align-items:center;justify-content:center;z-index:100;padding:20px;}
+  .overlay.show{display:flex;}
+  .modal{background:var(--paper);color:var(--ink-text);border-radius:12px;padding:30px;max-width:420px;width:100%;position:relative;}
+  .modal h3{font-family:'Fraunces',serif;font-size:22px;margin:0 0 6px;}
+  .modal p.sub{font-size:13px;color:#7a6a58;margin:0 0 20px;}
+  .modal label{display:block;font-size:11.5px;text-transform:uppercase;letter-spacing:0.6px;color:#8a7a66;margin-bottom:5px;font-family:'IBM Plex Mono',monospace;}
+  .modal input{width:100%;border:1px solid var(--paper-line);background:#fff;border-radius:7px;padding:10px 12px;margin-bottom:14px;font-size:14.5px;font-family:'Work Sans',sans-serif;}
+  .modal input:focus{outline:2px solid var(--saffron);}
+  .modal .switch{font-size:13px;color:#7a6a58;text-align:center;margin-top:6px;}
+  .modal .switch a{color:var(--chili);font-weight:600;cursor:pointer;text-decoration:underline;}
+  .modal .close{position:absolute;top:14px;right:16px;background:none;border:none;font-size:18px;cursor:pointer;color:#8a7a66;}
+  .modal .err{background:#fbe4e1;color:#9a3128;font-size:12.5px;padding:9px 12px;border-radius:6px;margin-bottom:14px;display:none;}
+  .modal .ok{background:#e3f0dd;color:#3f5c2b;font-size:12.5px;padding:9px 12px;border-radius:6px;margin-bottom:14px;display:none;}
+
+  /* checkout ticket */
+  .ticket{
+    position:relative;background:var(--paper);color:var(--ink-text);border-radius:6px;
+    padding:24px 28px;max-width:420px;width:100%;font-family:'IBM Plex Mono',monospace;
+  }
+  .ticket::before,.ticket::after{content:'';position:absolute;width:20px;height:20px;background:var(--ink);border-radius:50%;top:50%;transform:translateY(-50%);}
+  .ticket::before{left:-10px;} .ticket::after{right:-10px;}
+  .ticket .eyebrow{font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--chili);margin-bottom:6px;}
+  .ticket .id{font-size:23px;font-weight:600;margin-bottom:14px;}
+  .ticket .tear{border-top:2px dashed var(--paper-line);margin:14px 0;}
+  .ticket .line{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px;color:#5b5547;}
+  .ticket .line b{color:var(--ink-text);}
+
+  footer{text-align:center;color:var(--muted);font-size:11.5px;margin-top:40px;font-family:'IBM Plex Mono',monospace;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="logo">
+      <div class="logo-mark">WB</div>
+      <div>
+        <h1>Waybill</h1>
+        <p>order in · sent out</p>
+      </div>
+    </div>
+    <div class="auth-area" id="auth-area">
+      <button class="btn outline" onclick="openModal('login')">Log in</button>
+      <button class="btn solid" onclick="openModal('signup')">Sign up</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h2>Order in.<br>We'll <span>dispatch</span> it hot.</h2>
+    <p>Pick tonight's dish, hand it off, and a rider's on the road with your order before you've found the remote.</p>
+  </section>
+
+  <section>
+    <div class="section-label">Tonight's menu</div>
+    <h3 class="section-title">Pick your order</h3>
+    <div class="menu-grid" id="menu"></div>
+  </section>
+
+  <footer>WAYBILL — your account, your order history, dispatched from one kitchen.</footer>
+</div>
+
+<!-- cart bar -->
+<div class="cartbar">
+  <div class="cartbar-inner">
+    <div class="cart-summary" id="cart-summary">Cart empty</div>
+    <button class="btn solid" onclick="handleCheckout()">Checkout</button>
+  </div>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="overlay" id="auth-overlay">
+  <div class="modal">
+    <button class="close" onclick="closeModal('auth-overlay')">✕</button>
+
+    <div id="signup-form">
+      <h3>Create your account</h3>
+      <p class="sub">Name, contact, and a password — that's it.</p>
+      <div class="err" id="signup-err"></div>
+      <label>Full name</label>
+      <input id="su-name" type="text" placeholder="Asha Mehta">
+      <label>Email</label>
+      <input id="su-email" type="email" placeholder="asha@email.com">
+      <label>Phone number</label>
+      <input id="su-phone" type="tel" placeholder="98765 43210">
+      <label>Password</label>
+      <input id="su-pass" type="password" placeholder="At least 6 characters">
+      <button class="btn solid" style="width:100%;margin-top:4px;" onclick="doSignup()">Create account</button>
+      <p class="switch">Already have an account? <a onclick="openModal('login')">Log in</a></p>
+    </div>
+
+    <div id="login-form" style="display:none;">
+      <h3>Welcome back</h3>
+      <p class="sub">Log in to order and track your delivery.</p>
+      <div class="err" id="login-err"></div>
+      <label>Email</label>
+      <input id="li-email" type="email" placeholder="asha@email.com">
+      <label>Password</label>
+      <input id="li-pass" type="password" placeholder="Your password">
+      <button class="btn solid" style="width:100%;margin-top:4px;" onclick="doLogin()">Log in</button>
+      <p class="switch">New here? <a onclick="openModal('signup')">Create an account</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- CHECKOUT MODAL -->
+<div class="overlay" id="checkout-overlay">
+  <div class="modal" id="checkout-box">
+    <button class="close" onclick="closeModal('checkout-overlay')">✕</button>
+    <h3>Confirm delivery address</h3>
+    <p class="sub">Your order goes straight to dispatch.</p>
+    <div class="err" id="checkout-err"></div>
+    <label>Delivery address</label>
+    <input id="co-address" type="text" placeholder="Flat / street / landmark">
+    <label>Notes (optional)</label>
+    <input id="co-notes" type="text" placeholder="Ring the bell, leave at gate, etc.">
+    <button class="btn solid" style="width:100%;margin-top:4px;" onclick="placeOrder()">Place order</button>
+  </div>
+</div>
+
+<script>
+/* ===================== CONFIG — paste your Supabase project details here ===================== */
+const SUPABASE_URL = "https://cwhtmomweslynqyjildp.supabase.co";   // <-- replace
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN3aHRtb213ZXNseW5xeWppbGRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxMjA1MTgsImV4cCI6MjA5NzY5NjUxOH0.W6WtVBsNspCjZUIcj55t7DoxhtxVljftT4oZqjXmiu8";           // <-- replace
+/* ============================================================================================== */
+
+const MENU = [
+  {id:'BC', name:'Butter Chicken', desc:'Creamy tomato gravy, served with rice', price:260},
+  {id:'PT', name:'Paneer Tikka Wrap', desc:'Grilled paneer, mint chutney, paratha', price:180},
+  {id:'VB', name:'Veg Biryani', desc:'Fragrant rice, raita on the side', price:220},
+  {id:'CM', name:'Cheese Margherita', desc:'Classic wood-fired, basil', price:240},
+  {id:'CC', name:'Cold Coffee', desc:'Iced, frothy, just sweet enough', price:90},
+  {id:'GJ', name:'Gulab Jamun (2pc)', desc:'Warm, soaked in syrup', price:70},
+];
+
+let cart = {};          // {itemId: qty}
+let session = null;     // {access_token, user}
+
+/* ---------- render menu ---------- */
+function renderMenu(){
+  document.getElementById('menu').innerHTML = MENU.map(m => `
+    <div class="chit">
+      <div class="dish">${m.name}</div>
+      <div class="desc">${m.desc}</div>
+      <div class="bottom">
+        <span class="price">₹${m.price}</span>
+        <button onclick="addToCart('${m.id}')">Add ${cart[m.id] ? '· '+cart[m.id] : ''}</button>
+      </div>
+    </div>
+  `).join('');
+}
+function addToCart(id){
+  cart[id] = (cart[id] || 0) + 1;
+  renderMenu();
+  renderCartSummary();
+}
+function renderCartSummary(){
+  const ids = Object.keys(cart).filter(k => cart[k] > 0);
+  const summary = document.getElementById('cart-summary');
+  if(ids.length === 0){ summary.textContent = 'Cart empty'; return; }
+  const count = ids.reduce((s,k)=>s+cart[k],0);
+  const total = ids.reduce((s,k)=> s + cart[k]*MENU.find(m=>m.id===k).price, 0);
+  summary.innerHTML = `<b>${count} item${count>1?'s':''}</b> · ₹${total}`;
+}
+function cartItemsString(){
+  return Object.keys(cart).filter(k=>cart[k]>0)
+    .map(k => `${cart[k]}x ${MENU.find(m=>m.id===k).name}`).join(', ');
+}
+
+/* ---------- modals ---------- */
+function openModal(which){
+  document.getElementById('auth-overlay').classList.add('show');
+  document.getElementById('signup-form').style.display = which === 'signup' ? 'block' : 'none';
+  document.getElementById('login-form').style.display = which === 'login' ? 'block' : 'none';
+}
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+
+function handleCheckout(){
+  if(Object.values(cart).every(q=>!q)){ alert('Add something to your cart first.'); return; }
+  if(!session){ openModal('login'); return; }
+  document.getElementById('checkout-overlay').classList.add('show');
+}
+
+/* ---------- auth: direct calls to Supabase REST endpoints ---------- */
+async function doSignup(){
+  const name = document.getElementById('su-name').value.trim();
+  const email = document.getElementById('su-email').value.trim();
+  const phone = document.getElementById('su-phone').value.trim();
+  const password = document.getElementById('su-pass').value;
+  const errBox = document.getElementById('signup-err');
+  errBox.style.display = 'none';
+
+  if(!name || !email || !phone || !password){
+    errBox.textContent = 'Please fill in every field.'; errBox.style.display='block'; return;
+  }
+
+  try{
+    const res = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
+      method:'POST',
+      headers:{ apikey: SUPABASE_ANON_KEY, 'Content-Type':'application/json' },
+      body: JSON.stringify({ email, password, data:{ name, phone } })
+    });
+    const data = await res.json();
+    if(!res.ok){ errBox.textContent = data.msg || data.error_description || 'Could not create account.'; errBox.style.display='block'; return; }
+
+    if(data.access_token){
+      session = { access_token: data.access_token, user: data.user };
+      onLoggedIn();
+    }else{
+      errBox.style.display='none';
+      alert('Account created — check your email to confirm, then log in.');
+      openModal('login');
+    }
+  }catch(e){
+    errBox.textContent = 'Network error — check your Supabase URL/key.'; errBox.style.display='block';
+  }
+}
+
+async function doLogin(){
+  const email = document.getElementById('li-email').value.trim();
+  const password = document.getElementById('li-pass').value;
+  const errBox = document.getElementById('login-err');
+  errBox.style.display = 'none';
+
+  if(!email || !password){ errBox.textContent='Enter your email and password.'; errBox.style.display='block'; return; }
+
+  try{
+    const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+      method:'POST',
+      headers:{ apikey: SUPABASE_ANON_KEY, 'Content-Type':'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    if(!res.ok){ errBox.textContent = data.error_description || data.msg || 'Login failed.'; errBox.style.display='block'; return; }
+
+    session = { access_token: data.access_token, user: data.user };
+    onLoggedIn();
+  }catch(e){
+    errBox.textContent = 'Network error — check your Supabase URL/key.'; errBox.style.display='block';
+  }
+}
+
+function onLoggedIn(){
+  closeModal('auth-overlay');
+  const name = session.user?.user_metadata?.name || session.user?.email || 'there';
+  document.getElementById('auth-area').innerHTML = `
+    <span class="greet">Hi, <b>${name}</b></span>
+    <button class="btn outline" onclick="logout()">Log out</button>
+  `;
+}
+function logout(){
+  session = null;
+  document.getElementById('auth-area').innerHTML = `
+    <button class="btn outline" onclick="openModal('login')">Log in</button>
+    <button class="btn solid" onclick="openModal('signup')">Sign up</button>
+  `;
+}
+
+/* ---------- order placement ---------- */
+function genId(){
+  const d = new Date();
+  const ymd = d.getFullYear().toString().slice(2) + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
+  const rand = Math.floor(1000 + Math.random()*9000);
+  return `WB-${ymd}-${rand}`;
+}
+
+async function placeOrder(){
+  const address = document.getElementById('co-address').value.trim();
+  const notes = document.getElementById('co-notes').value.trim();
+  const errBox = document.getElementById('checkout-err');
+  errBox.style.display = 'none';
+
+  if(!address){ errBox.textContent = 'Add a delivery address.'; errBox.style.display='block'; return; }
+
+  const order = {
+    waybill_id: genId(),
+    user_id: session.user.id,
+    customer_name: session.user.user_metadata?.name || '',
+    phone: session.user.user_metadata?.phone || '',
+    address, notes,
+    items: cartItemsString(),
+    status: 'Placed'
+  };
+
+  try{
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/orders`, {
+      method:'POST',
+      headers:{
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${session.access_token}`,
+        'Content-Type':'application/json',
+        Prefer:'return=representation'
+      },
+      body: JSON.stringify(order)
+    });
+    const data = await res.json();
+    if(!res.ok){ errBox.textContent = data.message || 'Could not place order.'; errBox.style.display='block'; return; }
+
+    closeModal('checkout-overlay');
+    cart = {};
+    renderMenu();
+    renderCartSummary();
+    showTicket(order);
+  }catch(e){
+    errBox.textContent = 'Network error — check your Supabase setup.'; errBox.style.display='block';
+  }
+}
+
+function showTicket(order){
+  document.getElementById('checkout-box').outerHTML = `
+    <div class="ticket" id="checkout-box">
+      <button class="close" onclick="closeModal('checkout-overlay')">✕</button>
+      <div class="eyebrow">Order confirmed</div>
+      <div class="id">${order.waybill_id}</div>
+      <div class="tear"></div>
+      <div class="line"><span>Items</span><b>${order.items}</b></div>
+      <div class="line"><span>Address</span><b>${order.address}</b></div>
+      <div class="line"><span>Status</span><b>${order.status}</b></div>
+    </div>`;
+}
+
+renderMenu();
+renderCartSummary();
+</script>
+</body>
+</html>
